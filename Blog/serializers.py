@@ -4,14 +4,11 @@ from .models import CategoryTable, Comment, PostViews, Likes, Blog
 
 # Category Table serializer
 class CategorySerializer(serializers.ModelSerializer):
-    category_id = serializers.IntegerField()
-
     class Meta:
         model = CategoryTable
         fields = (
             'name'
         )
-        read_only_fields = ('category_id', )
 
 # Comment serializer
 class CommentSerializer(serializers.ModelSerializer):
@@ -80,9 +77,12 @@ class LikesSerializer(serializers.ModelSerializer):
         validated_data['user_id'] = self.context['request'].user.id
         like = Likes.objects.create(**validated_data)
         return like
-    
+
+# Blog serializer    
 class BlogSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
+    category_id = serializers.IntegerField()
+
     count_of_comments = serializers.SerializerMethodField()
     count_of_views = serializers.SerializerMethodField()
     count_of_likes = serializers.SerializerMethodField()
@@ -92,41 +92,45 @@ class BlogSerializer(serializers.ModelSerializer):
     like = LikesSerializer(many=True, read_only=True)
 
     class Meta:
-        Model = Blog
+        model = Blog
         fields = (
             'user',
             'title', 
             'content',
+            'category_id',
             'category',
             'comment',
-            # 'count_of_comment',
+            'count_of_comments',
             'post_view',
-            # 'count_of_views',
+            'count_of_views',
             'like',
-            # 'count_of_likes',
+            'count_of_likes',
             'status',
             'published_date',
             )
         read_only_fields = ('user',)
 
-    def get_count_of_comments(self, comment_obj):
-        return comment_obj.comment_set.count()
+    def get_count_of_comments(self, obj):
+        return obj.comment.count()
     
-    def count_of_views(self, blog_obj):
-        return blog_obj.postviews_set.count()
+    def get_count_of_views(self, obj):
+        return obj.post_views.filter(post_views=True).count()
+        # return obj.view.count()
     
-    def get_count_of_likes(self, likes_obj):
-        return likes_obj.likes_set.count()
+    def get_count_of_likes(self, obj):
+        return obj.likes.filter(likes=True).count()
     
     # Getting id automatically from token information django
     def create(self, validated_data):
         validated_data['user_id'] = self.context['request'].user.id
-        blog = Blog.objects.create(**validated_data)
-        return blog
+        instance = Blog.objects.create(**validated_data)
+        return instance
     
-
+# User Blog serializer
 class UserBlogSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
+    category_id = serializers.IntegerField()
+
     count_of_comments = serializers.SerializerMethodField()
     count_of_views = serializers.SerializerMethodField()
     count_of_likes = serializers.SerializerMethodField()
@@ -136,33 +140,35 @@ class UserBlogSerializer(serializers.ModelSerializer):
     like = LikesSerializer(many=True, read_only=True)
 
     class Meta:
-        Model = Blog
+        model = Blog
         fields = (
             'user',
             'title', 
             'content',
+            'category_id',
             'category',
             'comment',
-            # 'count_of_comment',
+            'count_of_comments',
             'post_view',
-            # 'count_of_views',
+            'count_of_views',
             'like',
-            # 'count_of_likes',
+            'count_of_likes',
             'published_date',
             )
         read_only_fields = ('user',)
 
-    def get_count_of_comments(self, comment_obj):
-        return comment_obj.comment_set.count()
+    def get_count_of_comments(self, obj):
+        return obj.comment.count()
     
-    def count_of_views(self, blog_obj):
-        return blog_obj.postviews_set.count()
+    def get_count_of_views(self, obj):
+        return obj.post_views.filter(post_views=True).count()
+        # return PostViews.objects.count()
     
-    def get_count_of_likes(self, likes_obj):
-        return likes_obj.likes_set.count()
+    def get_count_of_likes(self, obj):
+        return obj.likes.filter(likes=True).count()
     
     # Getting id automatically from token information django
     def create(self, validated_data):
         validated_data['user_id'] = self.context['request'].user.id
-        blog = Blog.objects.create(**validated_data)
-        return blog
+        instance = Blog.objects.create(**validated_data)
+        return instance

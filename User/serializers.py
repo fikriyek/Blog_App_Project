@@ -3,6 +3,7 @@ from rest_framework.validators import UniqueValidator
 
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
+from dj_rest_auth.serializers import TokenSerializer
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -60,16 +61,17 @@ class RegisterSerializer(serializers.ModelSerializer):
       user.save()
       return user
    
-class UserTokenSerializer(AuthTokenSerializer):
-      model = User
-      fields = (
-         'id',
-         'first_name',
-         'last_name',
-         'email',
+class UserTokenSerializer(serializers.ModelSerializer):
+      class Meta:
+          model = User
+          fields = (
+              'id',
+              'first_name',
+              'last_name',
+              'email',
       )
 
-class CustomTokenSerializer(AuthTokenSerializer):
+class CustomTokenSerializer(TokenSerializer):
     user = UserTokenSerializer
 
     class Meta:
