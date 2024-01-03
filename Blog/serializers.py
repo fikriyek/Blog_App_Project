@@ -115,7 +115,6 @@ class BlogSerializer(serializers.ModelSerializer):
     
     def get_count_of_views(self, obj):
         return obj.post_views.filter(post_views=True).count()
-        # return obj.view.count()
     
     def get_count_of_likes(self, obj):
         return obj.likes.filter(likes=True).count()
@@ -162,7 +161,6 @@ class UserBlogSerializer(serializers.ModelSerializer):
     
     def get_count_of_views(self, obj):
         return obj.post_views.filter(post_views=True).count()
-        # return PostViews.objects.count()
     
     def get_count_of_likes(self, obj):
         return obj.likes.filter(likes=True).count()
