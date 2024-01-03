@@ -1,7 +1,7 @@
 from django.urls import path, include
 from .views import CategoryListCV, CategoryCreateCV, CategoryUpdateCV, CategoryDeleteCV
 from .views import CommentListCV, CommentCreateCV, CommentUpdateCV, CommentDeleteCV
-from .views import BlogPageListCV
+from .views import BlogPageListCV, BlogPageCreateCV, BlogPageUpdateCV, BlogPageDeleteCV
 
 urlpatterns = [
     # Category Table
@@ -18,4 +18,7 @@ urlpatterns = [
 
     # Blog
     path('blogListCV/', BlogPageListCV.as_view()),
+    path('blogCreateCV/', BlogPageCreateCV.as_view()),
+    path('blogUpdateCV/<int:pk>/', BlogPageUpdateCV.as_view()),
+    path('blogDeleteCV/<int:pk>/', BlogPageDeleteCV.as_view())
 ]

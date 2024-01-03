@@ -60,6 +60,7 @@ class CommentDeleteCV(DestroyAPIView):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
+# Blog concrete view for GET
 class BlogPageListCV(ListAPIView):
     queryset = Blog.objects.all()
     serializer_class = UserBlogSerializer
@@ -70,43 +71,43 @@ class BlogPageListCV(ListAPIView):
 
         if self.request.user.is_staff:
             return BlogSerializer
-        return serializer   
+        return serializer 
 
-    
-    
-# @api_view(['GET', 'POST'])
-# def blog_list_create(request):
-#     if request.method == 'GET':
-#         blog = Blog.objects.filter(is_done=False)
-#         serializer = BlogSerializer(blog, many=True)
-#         return Response(serializer.data)
+# Blog concrete view for POST
+class BlogPageCreateCV(CreateAPIView):
+    queryset = Blog.objects.all()
+    serializer_class = UserBlogSerializer
+    permission_classes = [IsOwnerOrReadOnly, IsStaffOrReadOnly] 
 
-#     elif request.method == 'POST':
-#         serializer = BlogSerializer(data=request.data)
-#         permission_classes = [IsOwnerOrReadOnly, IsStaffOrReadOnly]
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+    def get_serializer_class(self):
+        serializer = super().get_serializer_class()
 
-# @api_view(['GET', 'PUT', 'DELETE'])
-# def blog_detail(request, pk):
-#     blog = get_object_or_404(Blog, id=pk)
+        if self.request.user.is_staff:
+            return BlogSerializer
+        return serializer  
 
-#     if request.method == 'GET':
-#         # todo = Todo.objects.get(id=pk)
-#         serializer = BlogSerializer(blog)
-#         return Response(serializer.data)
-    
-#     elif request.method == 'PUT':
-#         # todo = Todo.objects.filter(id=pk)
-#         serializer = BlogSerializer(data=request.data, instance=blog)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-#     elif request.method == 'DELETE':
-#         blog.delete()
-#         return Response({'message':'Blog was deleted succesfully.'})
+# Blog concrete view for PUT   
+class BlogPageUpdateCV(UpdateAPIView):
+    queryset = Blog.objects.all()
+    serializer_class = UserBlogSerializer
+    permission_classes = [IsOwnerOrReadOnly, IsStaffOrReadOnly] 
+
+    def get_serializer_class(self):
+        serializer = super().get_serializer_class()
+
+        if self.request.user.is_staff:
+            return BlogSerializer
+        return serializer  
+
+# Blog concrete view for DELETE  
+class BlogPageDeleteCV(DestroyAPIView):
+    queryset = Blog.objects.all()
+    serializer_class = UserBlogSerializer
+    permission_classes = [IsOwnerOrReadOnly, IsStaffOrReadOnly] 
+
+    def get_serializer_class(self):
+        serializer = super().get_serializer_class()
+
+        if self.request.user.is_staff:
+            return BlogSerializer
+        return serializer  
